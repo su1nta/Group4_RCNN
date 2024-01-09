@@ -18,7 +18,7 @@ transform = transforms.Compose([
 # Define the dataset
 train_dataset = VOCDetection(root=data_dir, year='2012', image_set='train', download=False, transform=transform)
 
-# Define a function to extract the bounding boxes and labels from the annotations
+# function to extract the bounding boxes and labels from the annotations
 def extract_boxes_labels(annotation_file):
     tree = ET.parse(annotation_file)
     root = tree.getroot()
@@ -38,7 +38,7 @@ def extract_boxes_labels(annotation_file):
     #return torch.tensor(boxes), torch.tensor(labels)
     return torch.tensor(boxes), labels
 
-# Define a function to get the image and its annotations
+# function to get the image and its annotations
 def get_image_annotation(idx):
     img, _ = train_dataset.__getitem__(idx)
     annotation_file = train_dataset.annotations[idx]
@@ -47,9 +47,17 @@ def get_image_annotation(idx):
     boxes, labels = extract_boxes_labels(path)
     return img, boxes, labels
 
+# main function to get the preprocessed data to train
+def get_preprocessed_data():
+    # img, boxes, labels = get_image_annotation(0)
+    img = []
+    boxes = []
+    labels = []
 
-# Test the functions
-img, boxes, labels = get_image_annotation(0)
-print(img.shape)
-print(boxes)
-print(labels)
+    for i in range(1, len(train_dataset)):
+        img_temp, boxes_temp, labels_temp = get_image_annotation(i)
+        img.append(img_temp)
+        boxes.append(boxes_temp)
+        labels.append(labels_temp)
+
+    return img, boxes, labels
